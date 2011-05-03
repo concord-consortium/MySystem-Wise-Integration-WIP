@@ -1,4 +1,4 @@
-/*globals MYSYSTEM_SCSTATE eventManager */
+/*globals MYSYSTEM_SCSTATE eventManager SC MySystem */
 
 /**
  * This is the constructor for the object that will perform the logic for
@@ -41,8 +41,13 @@ MYSYSTEM_SC.prototype.render = function () {
 		 */
 		var latestResponse = latestState.response;
 		
-		// push the previous student work into the DOM
-		document.getElementById('my_system_state').value = latestResponse; 
+		// push the previous student work into the DOM. Can't assume SC has inited yet (hence, can't use SC.$())
+		document.getElementById('my_system_state').textContent = latestResponse;
+		
+		// and tell MySystem to load the data from the DOM element, if it has started up.
+		if (MySystem && MySystem.updateFromDOM) {
+		  MySystem.updateFromDOM();
+		}
 	}
 };
 
@@ -53,8 +58,6 @@ MYSYSTEM_SC.prototype.render = function () {
  * work for this step
  */
 MYSYSTEM_SC.prototype.getLatestState = function () {
-  if (console && console.log) console.log("MYSYSTEM_SC.getLatestState()");
-
 	var latestState = null;
 	
 	if (this.states && this.states.length > 0) {
@@ -73,10 +76,11 @@ MYSYSTEM_SC.prototype.getLatestState = function () {
  * the .html file for this step (look at template.html).
  */
 MYSYSTEM_SC.prototype.save = function () {
-  if (console && console.log) console.log("MYSYSTEM_SC.save()");
+  // abort if for any reason we can't use SC.CoreQuery, so that we don't accidentally save null data
+  if (!SC || !SC.$) return;
 
 	// get the answer the student wrote
-	var response = document.getElementById('my_system_state').value;
+	var response = SC.$('#my_system_state').text();
 	
 	/*
 	 * create the student state that will store the new work the student
