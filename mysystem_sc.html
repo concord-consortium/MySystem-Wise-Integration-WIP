@@ -7,9 +7,9 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <link rel="apple-touch-icon" href="/vlewrapper/vle/node/mysystem_sc/images/00_my_system_sproutcore-logo.png" />
-	  <link rel="apple-touch-startup-image" media="screen and (orientation:portrait)" href="/vlewrapper/vle/node/mysystem_sc/images/00_my_system_sproutcore-startup-portrait.png" /> 
-	  <link rel="apple-touch-startup-image" media="screen and (orientation:landscape)" href="/vlewrapper/vle/node/mysystem_sc/images/00_my_system_sproutcore-startup-landscape.png" />
+    <link rel="apple-touch-icon" href="images/00_my_system_sproutcore-logo.png" />
+	  <link rel="apple-touch-startup-image" media="screen and (orientation:portrait)" href="images/00_my_system_sproutcore-startup-portrait.png" /> 
+	  <link rel="apple-touch-startup-image" media="screen and (orientation:landscape)" href="images/00_my_system_sproutcore-startup-landscape.png" />
 	  <link rel="shortcut icon" href="" type="image/x-icon" />
     
     <title>My System</title>
@@ -131,16 +131,16 @@ SC.setupBodyClassNames = function() {
       window.loadContent = function (node) {
         scriptloader.loadScripts('mysystem_sc', document, node.id, eventManager);
       };
-      
+
       /**
         Called by WISE4 when we leave the step
       */
       window.onExit = function () {
         save();
       };
-
+      
       /**
-        save the state?
+        Called (in a WISE4 context) when we want the MySystem app to save the diagram state
       */
       window.save = function () {
         system.save();
@@ -150,10 +150,10 @@ SC.setupBodyClassNames = function() {
   </script>
   
   
-     <link href="/vlewrapper/vle/node/mysystem_sc/css/00_my_system_stylesheet-packed.css" rel="stylesheet" type="text/css" />
-  <link href="/vlewrapper/vle/node/mysystem_sc/css/00_my_system_stylesheet.css" rel="stylesheet" type="text/css" />
-  <link href="/vlewrapper/vle/node/mysystem_sc/css/01_my_system_stylesheet.css" rel="stylesheet" type="text/css" />
-  <link href="/vlewrapper/vle/node/mysystem_sc/css/02_my_system_stylesheet.css" rel="stylesheet" type="text/css" />
+     <link href="css/00_my_system_stylesheet-packed.css" rel="stylesheet" type="text/css" />
+  <link href="css/00_my_system_stylesheet.css" rel="stylesheet" type="text/css" />
+  <link href="css/01_my_system_stylesheet.css" rel="stylesheet" type="text/css" />
+  <link href="css/02_my_system_stylesheet.css" rel="stylesheet" type="text/css" />
    
     
   </head>
@@ -205,7 +205,7 @@ if (SC.setupBodyClassNames) SC.setupBodyClassNames() ;
     &quot;MySystem.Node&quot;: {
       &quot;1&quot;: {
         &quot;guid&quot;: &quot;1&quot;,
-        &quot;image&quot;: &quot;/vlewrapper/vle/node/mysystem_sc/images/00_my_system_clay_red_tn.png&quot;,
+        &quot;image&quot;: &quot;images/00_my_system_clay_red_tn.png&quot;,
         &quot;title&quot;: &quot;A Node&quot;,
         &quot;transformer&quot;: false,
         &quot;inLinks&quot;: [],
@@ -223,7 +223,7 @@ if (SC.setupBodyClassNames) SC.setupBodyClassNames() ;
       },
       &quot;2&quot;: {
         &quot;guid&quot;: &quot;2&quot;,
-        &quot;image&quot;: &quot;/vlewrapper/vle/node/mysystem_sc/images/00_my_system_hand_tn.png&quot;,
+        &quot;image&quot;: &quot;images/00_my_system_hand_tn.png&quot;,
         &quot;title&quot;: &quot;B Node&quot;,
         &quot;transformer&quot;: false,
         &quot;inLinks&quot;: [
@@ -237,7 +237,7 @@ if (SC.setupBodyClassNames) SC.setupBodyClassNames() ;
       },
       &quot;3&quot;: {
         &quot;guid&quot;: &quot;3&quot;,
-        &quot;image&quot;: &quot;/vlewrapper/vle/node/mysystem_sc/images/00_my_system_lightbulb_tn.png&quot;,
+        &quot;image&quot;: &quot;images/00_my_system_lightbulb_tn.png&quot;,
         &quot;title&quot;: &quot;Third Node&quot;,
         &quot;transformer&quot;: false,
         &quot;inLinks&quot;: [
@@ -275,11 +275,11 @@ if (SC.setupBodyClassNames) SC.setupBodyClassNames() ;
     }
   }
 </div>
-  <script type="text/javascript" src="/vlewrapper/vle/node/mysystem_sc/js/00_my_system_javascript-packed.js"></script>
-  <script type="text/javascript" src="/vlewrapper/vle/node/mysystem_sc/js/00_my_system_javascript.js"></script>
-  <script type="text/javascript" src="/vlewrapper/vle/node/mysystem_sc/js/01_my_system_javascript.js"></script>
-  <script type="text/javascript" src="/vlewrapper/vle/node/mysystem_sc/js/02_my_system_javascript.js"></script>
-  <script type="text/javascript" src="/vlewrapper/vle/node/mysystem_sc/js/03_my_system_javascript.js"></script>
+  <script type="text/javascript" src="js/00_my_system_javascript-packed.js"></script>
+  <script type="text/javascript" src="js/00_my_system_javascript.js"></script>
+  <script type="text/javascript" src="js/01_my_system_javascript.js"></script>
+  <script type="text/javascript" src="js/02_my_system_javascript.js"></script>
+  <script type="text/javascript" src="js/03_my_system_javascript.js"></script>
 <script type="text/javascript">String.preferredLanguage = "en";</script>
 	</body>
 </html>
