@@ -133,10 +133,15 @@ SC.setupBodyClassNames = function() {
         scriptloader.loadScripts('mysystem_sc', document, node.id, eventManager);
       };
       
-      
+      /**
+        Called by WISE4 when we leave the step
+      */
+      window.onExit = function () {
+        save();
+      };
 
       /**
-        Called by WISE4 when it wants the MySystem app to save the diagram state
+        save the state?
       */
       window.save = function () {
         system.save();

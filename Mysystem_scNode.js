@@ -84,7 +84,6 @@ Mysystem_scNode.prototype.onExit = function () {
 			 * server.
 			 */
 			if (this.contentPanel.onExit) {
-        debugger;
 				try {
 					// run the on exit cleanup
 					this.contentPanel.onExit();					
