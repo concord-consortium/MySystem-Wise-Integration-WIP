@@ -1,22 +1,23 @@
-/*globals MYSYSTEM_SCSTATE eventManager SC MySystem */
-
 /**
  * This is the constructor for the object that will perform the logic for
  * the step when the students work on it. An instance of this object will
- * be created in the .html for this step (look at template.html)
+ * be created in the .html for this step (look at mysystem.html)
  */
-function MYSYSTEM_SC(node, view) {
+function Mysystem2(node,view) {
   this.node = node;
-  this.view = view;
   this.content = node.getContent().getContentJSON();
-  
-  if (node.studentWork !== null) {
+
+  // TODO: This is a bit hackety, pulling a MySytem-ref out of the inner-frame
+  this.MySystem = MySystem;
+  this.domIO = document.getElementById('my_system_state');
+
+  if (node.studentWork != 'undefined' && node.studentWork != null) {
     this.states = node.studentWork; 
   } 
   else {
-    this.states = [];  
+    this.states = [];
   }
-}
+};
 
 /**
  * This function renders everything the student sees when they visit the step.
@@ -24,15 +25,8 @@ function MYSYSTEM_SC(node, view) {
  * previous work the student has submitted when they previously worked on this
  * step, if any.
  */
-MYSYSTEM_SC.prototype.render = function () {
-
-  // display any prompts to the student
-  // example:
-  // document.getElementById('promptDiv').innerHTML = this.content.prompt;
-  
-  // load any previous responses the student submitted for this step
+Mysystem2.prototype.render = function() {
   var latestState = this.getLatestState();
-  
   if (latestState !== null) {
     /*
      * get the response from the latest state. the response variable is
@@ -40,14 +34,13 @@ MYSYSTEM_SC.prototype.render = function () {
      * would like from the state object (look at templatestate.js)
      */
     var latestResponse = latestState.response;
-    
-    // push the previous student work into the DOM. Can't assume SC has inited yet (hence, can't use SC.$())
-    document.getElementById('my_system_state').textContent = latestResponse;
-    
-    // and tell MySystem to load the data from the DOM element, if it has started up.
-    if (window['MySystem'] && MySystem.updateFromDOM) {
-      MySystem.updateFromDOM();
-    }
+    this.domIO.textContent = latestResponse;
+  }
+  if (this.content) {
+    this.MySystem.loadWiseConfig(this.content,latestState);
+  }
+  if (latestState) {
+    this.MySystem.updateFromDOM();
   }
 };
 
@@ -57,13 +50,12 @@ MYSYSTEM_SC.prototype.render = function () {
  * @return the latest state object or null if the student has never submitted
  * work for this step
  */
-MYSYSTEM_SC.prototype.getLatestState = function () {
+Mysystem2.prototype.getLatestState = function() {
   var latestState = null;
   
   if (this.states && this.states.length > 0) {
     latestState = this.states[this.states.length - 1];
   }
-  
   return latestState;
 };
 
@@ -73,20 +65,16 @@ MYSYSTEM_SC.prototype.getLatestState = function () {
  * 
  * note: you do not have to use 'studentResponseTextArea', they are just 
  * provided as examples. you may create your own html ui elements in
- * the .html file for this step (look at template.html).
+ * the .html file for this step (look at mysystem.html).
  */
-MYSYSTEM_SC.prototype.save = function () {
-  // abort if for any reason we can't use SC.CoreQuery, so that we don't accidentally save null data
-  if (!SC || !SC.$) return;
-
-  // get the answer the student wrote
-  var response = SC.$('#my_system_state').text();
-  
+Mysystem2.prototype.save = function() {
+  // We use a simple dom element for our data passing
+  var response =this.domIO.textContent;
   /*
    * create a student state object that will store the new work the student
    * just submitted
    */
-  var state = new MYSYSTEM_SCSTATE(response);
+  var state = new MYSYSTEMSTATE(response);
   
   /*
    * fire the event to push this state to the global view.states object.
@@ -99,7 +87,8 @@ MYSYSTEM_SC.prototype.save = function () {
   this.states.push(state);
 };
 
-// used to notify scriptloader that this script has finished loading
-if (typeof eventManager !== 'undefined') {
-  eventManager.fire('scriptLoaded', 'vle/node/mysystem_sc/mysystem_sc.js');
+
+//used to notify scriptloader that this script has finished loading
+if(typeof eventManager != 'undefined'){
+	eventManager.fire('scriptLoaded', 'vle/node/mysystem2/mysystem2.js');
 }

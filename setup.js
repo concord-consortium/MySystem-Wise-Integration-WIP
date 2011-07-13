@@ -1,51 +1,64 @@
-/*globals scriptloader componentloader eventManager */
-
+/*
+ * the scripts that are always necessary regardless of whether the
+ * user is using the vle, authoring tool, or grading tool
+ */
 var coreScripts = [
-  'vle/node/mysystem_sc/Mysystem_scNode.js',
-  'vle/node/mysystem_sc/mysystem_scEvents.js'
+	'vle/node/mysystem2/Mysystem2Node.js',
+	'vle/node/mysystem2/mysystem2Events.js'
 ];
 
+//the scripts used in the vle
 var studentVLEScripts = [
-  'vle/node/mysystem_sc/mysystem_sc.js',
-  'vle/node/mysystem_sc/mysystem_scstate.js'
+	'vle/node/mysystem2/mysystem2.js',
+	'vle/node/mysystem2/mysystem2State.js',
+  // ,
+  'vle/jquery/js/jquery-1.4.4.min.js',
+  'vle/jquery/js/jquery-ui-1.8.7.custom.min.js'
 ];
 
+//the scripts used in the authoring tool
 var authorScripts = [
-  'vle/node/mysystem_sc/authorview_mysystem_sc.js'
+	'vle/node/mysystem2/authorview_mysystem2.js'
 ];
 
+//the scripts used in the grading tool
 var gradingScripts = [
-  'vle/node/mysystem_sc/mysystem_scstate.js'
+	'vle/node/mysystem2/mysystem2State.js'
 ];
 
+//dependencies when a file requires another file to be loaded before it
 var dependencies = [
-  {child:"vle/node/mysystem_sc/Mysystem_scNode.js", parent:["vle/node/Node.js"]}
+	{child:"vle/node/mysystem2/Mysystem2Node.js", parent:["vle/node/Node.js"]}
 ];
 
 var nodeClasses = [
-  {nodeClass:'display', nodeClassText:'Mysystem_sc'}
+	{nodeClass:'display', nodeClassText:'Mysystem2'}
 ];
 
 scriptloader.addScriptToComponent('core', coreScripts);
-
-scriptloader.addScriptToComponent('mysystem_sc', studentVLEScripts);
-
+scriptloader.addScriptToComponent('mysystem', studentVLEScripts);
 scriptloader.addScriptToComponent('author', authorScripts);
 scriptloader.addScriptToComponent('studentwork', gradingScripts);
 scriptloader.addDependencies(dependencies);
 
-componentloader.addNodeClasses('Mysystem_scNode', nodeClasses);
+componentloader.addNodeClasses('Mysystem2Node', nodeClasses);
+
+// var css = [
+//          "vle/node/mysystem2/mysystem.css"
+// ];
+
+// scriptloader.addCssToComponent('mysystem', css);
 
 var nodeTemplateParams = [
-  {
-    nodeTemplateFilePath:'node/mysystem_sc/mysystem_scTemplate.my',
-    nodeExtension:'my'
-  }
+	{
+		nodeTemplateFilePath:'node/mysystem2/mysystem2Template.my',
+		nodeExtension:'my'
+	}
 ];
 
-componentloader.addNodeTemplateParams('Mysystem_scNode', nodeTemplateParams);
+componentloader.addNodeTemplateParams('Mysystem2Node', nodeTemplateParams);
 
 //used to notify scriptloader that this script has finished loading
-if (typeof eventManager != 'undefined') {
-  eventManager.fire('scriptLoaded', 'vle/node/mysystem_sc/setup.js');
-}
+if(typeof eventManager != 'undefined'){
+	eventManager.fire('scriptLoaded', 'vle/node/mysystem2/setup.js');
+};

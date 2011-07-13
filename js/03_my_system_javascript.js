@@ -1,14 +1,16 @@
 (function(){var a="standard_theme";if(!SC.BUNDLE_INFO){throw"SC.BUNDLE_INFO is not defined!"
 }if(SC.BUNDLE_INFO[a]){return}SC.BUNDLE_INFO[a]={requires:[],styles:["css/01_my_system_stylesheet-packed.css","css/01_my_system_stylesheet.css"],scripts:["js/01_my_system_javascript-packed.js"]}
-})();MySystem=SC.Application.create({NAMESPACE:"MySystem",VERSION:"0.1.0",canvasView:null,NOVICE_STUDENT:"novice",ADVANCED_STUDENT:"advanced",updateFromDOM:function(){SC.run(function(){MySystem.store.setStudentStateDataHash(JSON.parse(SC.$("#my_system_state").text()))
-})}});MySystem.nodePaletteController=SC.ArrayController.create({});MySystem.nodesController=SC.ArrayController.create(SC.CollectionViewDelegate,{selectedLinksBinding:"MySystem.canvasView.selectedLinks",allSelected:function(){var a=MySystem.canvasView.get("selectedLinks");
+})();MySystem=SC.Application.create({NAMESPACE:"MySystem",VERSION:"0.1.0",canvasView:null,NOVICE_STUDENT:"novice",ADVANCED_STUDENT:"advanced",updateFromDOM:function(){SC.run(function(){var a=SC.$("#my_system_state").text();
+MySystem.store.setStudentStateDataHash(JSON.parse(a))})},});MySystem.activityController=SC.ObjectController.create({});
+MySystem.nodePaletteController=SC.ArrayController.create({contentBinding:"MySystem.activityController.paletteItems"});
+MySystem.nodesController=SC.ArrayController.create(SC.CollectionViewDelegate,{selectedLinksBinding:"MySystem.canvasView.selectedLinks",allSelected:function(){var a=MySystem.canvasView.get("selectedLinks");
 var b=this.get("selection").clone();b=b.addObjects(a.map(function(c){return c.get("model")
 }));return b}.property("selectedLinks","selection").cacheable(),unselectAll:function(){if(this.selectedLinks){this.set("selectedLinks",[]);
 MySystem.canvasView.linksDidChange()}var a=this.get("selection").clone();this.deselectObjects(a)
 },collectionViewDeleteContent:function(a,b,c){var d=c.map(function(e){return this.objectAt(e)
 },this);d.invoke("destroy")},collectionViewSelectionForProposedSelection:function(a,b){if(a.get("mouseDownInfo")&&a.get("mouseDownInfo").event.shiftKey){return null
 }else{return b}},propertyEditing:function(){MySystem.statechart.sendEvent("diagramSelectionChanged",{})
-}.observes("allSelected")});MySystem.storyController=SC.ObjectController.create({});
+}.observes("allSelected")});MySystem.storyController=SC.ObjectController.create({contentBinding:"MySystem.activityController.assignmentText"});
 MySystem.storySentenceController=SC.ArrayController.create(SC.CollectionViewDelegate,{allowsMultipleSelection:NO,editingSentence:null,collectionViewDeleteContent:function(a,e,d){var c=d.map(function(f){return this.objectAt(f)
 },this);c.invoke("destroy");var b=d.get("min")-1;if(b<0){b=0}this.selectObject(this.objectAt(b));
 return YES},collectionViewPerformDragOperation:function(b,d,f,c,a){var e=d.get("source").get("selection").firstObject();
@@ -57,7 +59,13 @@ this.notifyPropertyChange("dataHash");return YES},getRecordTypeFromName:function
 }f=this.getRecordTypeFromName(b);if(!this.handlesType(f)){continue}d[b]={};for(e in a[b]){if(!a[b].hasOwnProperty(e)){continue
 }c.pushRetrieve(f,e,SC.copy(a[b][e],YES));d[b][e]=SC.copy(a[b][e],YES)}}this._dataHash=d;
 this.notifyPropertyChange("dataHash")}});MySystem.Activity=SC.Record.extend({paletteItems:SC.Record.toMany("MySystem.PaletteItem"),assignmentText:SC.Record.attr(String),energyTypes:SC.Record.toMany("MySystem.EnergyType")});
-sc_require("models/activity");MySystem.Activity.FIXTURES=[{guid:"assign1",paletteItems:["pi1","pi2","pi3"],assignmentText:"<p>Make a diagram and story to help explain how <i>both</i> the sun and people's actions affect the Earth's climate.</p><ul><li>Where does the energy originally come from?</li><li>How does the energy move through the system?</li><li>How does the energy change as it moves through the system?</li><li>Where does the energy go in the end?</li></ul>",energyTypes:["et1","et2","et3","et4","et5"]}];
+MySystem.Activity.GuidCounter=100;MySystem.Activity.newGuid=function(a){return a+MySystem.Activity.GuidCounter++
+};MySystem.Activity.fromWiseStepDef=function(e){var g=MySystem.Activity.newGuid("actvitiy");
+var d=e.modules;var c=null;var b=MySystem.store.createRecord(MySystem.Activity,{assignmentText:e.prompt,guid:MySystem.Activity.newGuid("activity")});
+var k=d.length;var f=0;for(f=0;f<k;f++){module=d[f];c=MySystem.store.createRecord(MySystem.PaletteItem,{title:module.name,image:module.image},MySystem.Activity.newGuid("palette_item"));
+b.get("paletteItems").pushObject(c)}var a=e.energy_types;k=a.length;var h="";var j=null;
+for(f=0;f<k;f++){h=a[f];j=MySystem.store.createRecord(MySystem.EnergyType,{label:h.label,color:h.color,isEnabled:YES},MySystem.Activity.newGuid("energyType"));
+b.get("energyTypes").pushObject(j)}return b};sc_require("models/activity");MySystem.Activity.FIXTURES=[{guid:"assign1",paletteItems:["pi1","pi2","pi3"],assignmentText:"<p>Make a diagram and story to help explain how <i>both</i> the sun and people's actions affect the Earth's climate.</p><ul><li>Where does the energy originally come from?</li><li>How does the energy move through the system?</li><li>How does the energy change as it moves through the system?</li><li>Where does the energy go in the end?</li></ul>",energyTypes:["et1","et2","et3","et4","et5"]}];
 MySystem.EnergyType=SC.Record.extend({label:SC.Record.attr(String,{isRequired:YES,defaultValue:"Energy Flow"}),color:SC.Record.attr(String,{isRequired:YES}),isEnabled:SC.Record.attr(Boolean,{isRequired:YES,defaultValue:YES})});
 sc_require("models/energy_type");MySystem.EnergyType.FIXTURES=[{guid:"et1",label:"infrared radiation",color:"#490A3D",isEnabled:YES},{guid:"et2",label:"thermal energy",color:"#BD1550",isEnabled:YES},{guid:"et3",label:"solar radiation",color:"#E97F02",isEnabled:YES},{guid:"et4",label:"kinetic energy",color:"#F8CA00",isEnabled:YES},{guid:"et5",label:"light energy",color:"#8A9B0F",isEnabled:YES}];
 MySystem.PaletteItem=SC.Record.extend({image:SC.Record.attr(String),title:SC.Record.attr(String)});
@@ -150,11 +158,11 @@ this.set("linkStyle",a)},dimColor:function(){if(this.get("isDimmed")===YES){var 
 g=this.get("color");b={};var h=MySystem.Link.COLOR_DEFS;for(var c=0;c<h.length;c++){var e=h[c].re;
 var d=h[c].process;var f=e.exec(g);if(f){a=d(f);b.r=a[0];b.g=a[1];b.b=a[2];b.a=(a[3]?a[3]:1);
 b.ok=true}}if(b.r!==undefined){b.a=b.a*0.2;this.set("color","rgba("+b.r.toString()+", "+b.g.toString()+", "+b.b.toString()+", "+b.a.toString()+")");
-return YES}else{console.log("No matching color pattern found.");return NO}}}.observes("isDimmed"),unDimColor:function(){if(!this.get("isDimmed")){var g,b,a;
+return YES}else{SC.Logger.log("No matching color pattern found.");return NO}}}.observes("isDimmed"),unDimColor:function(){if(!this.get("isDimmed")){var g,b,a;
 g=this.get("color");b={};var h=MySystem.Link.COLOR_DEFS;for(var c=0;c<h.length;c++){var e=h[c].re;
 var d=h[c].process;var f=e.exec(g);if(f){a=d(f);b.r=a[0];b.g=a[1];b.b=a[2];b.a=(a[3]?a[3]:1);
 b.ok=true}}if(b.r!==undefined){b.a=b.a*5;if(b.a>1){b.a=1}if(!this.get("isDestroyed")){this.set("color","rgba("+b.r.toString()+", "+b.g.toString()+", "+b.b.toString()+", "+b.a.toString()+")")
-}return YES}else{console.log("No matching color pattern found.");return NO}}}.observes("isDimmed"),fixSelectionDimming:function(){if(this.get("isSelected")&&this.get("isDimmed")){this.set("isDimmed",NO)
+}return YES}else{SC.Logger.log("No matching color pattern found.");return NO}}}.observes("isDimmed"),fixSelectionDimming:function(){if(this.get("isSelected")&&this.get("isDimmed")){this.set("isDimmed",NO)
 }}});MySystem.Link.GuidCounter=100;MySystem.Link.newGuid=function(){return"link"+MySystem.Link.GuidCounter++
 };MySystem.Link.hashFromLinkItLink=function(a){var b={};b.startNode=a.get("startNode");
 b.startTerminal=a.get("startTerminal");b.endNode=a.get("endNode");b.endTerminal=a.get("endTerminal");
@@ -232,11 +240,11 @@ c.forEach(function(f,e,d){this.pushObject(f)},a);b.forEach(function(f,e,d){this.
 },a);return a}.property().cacheable(),_diagramObjectsDidChange:function(){this.notifyPropertyChange("diagramObjects")
 }.observes(".nodes.[]",".links.[]")});MySystem.StorySentence.GuidCounter=100;MySystem.StorySentence.newGuid=function(){return"ss"+MySystem.Node.GuidCounter++
 };MySystem.statechart=Ki.Statechart.create({rootState:Ki.State.design({initialSubstate:"DIAGRAM_EDITING",DIAGRAM_EDITING:Ki.State.plugin("MySystem.DIAGRAM_EDITING"),DIAGRAM_OBJECT_EDITING:Ki.State.plugin("MySystem.DIAGRAM_OBJECT_EDITING"),SENTENCE_EDITING:Ki.State.design({commitEdits:function(){this.gotoState("DIAGRAM_EDITING")
-},enterState:function(){console.log("Entering state %s",this.get("name"))},exitState:function(){console.log("Leaving state %s",this.get("name"))
+},enterState:function(){SC.Logger.log("Entering state %s",this.get("name"))},exitState:function(){SC.Logger.log("Leaving state %s",this.get("name"))
 }}),SENTENCE_OBJECT_LINKING_SETUP:Ki.State.plugin("MySystem.SENTENCE_OBJECT_LINKING_SETUP"),SENTENCE_OBJECT_LINKING:Ki.State.plugin("MySystem.SENTENCE_OBJECT_LINKING"),checkDiagramAgainstConstraints:function(){var a=MySystem.store.find(MySystem.Node),b=0;
 a.forEach(function(c){if(/clay/.test(c.get("image"))){b++}});if(b>2){SC.AlertPane.warn("You may have too many clay nodes in your diagram.")
-}else{SC.AlertPane.info("Your diagram has no obvious problems.")}}})});MySystem.DIAGRAM_EDITING=Ki.State.design({enterState:function(){console.log("Entering state %s",this.get("name"))
-},exitState:function(){console.log("Leaving state %s",this.get("name"))},addNode:function(a){var c;
+}else{SC.AlertPane.info("Your diagram has no obvious problems.")}}})});MySystem.DIAGRAM_EDITING=Ki.State.design({enterState:function(){SC.Logger.log("Entering state %s",this.get("name"))
+},exitState:function(){SC.Logger.log("Leaving state %s",this.get("name"))},addNode:function(a){var c;
 var b=MySystem.Node.newGuid();c=MySystem.store.createRecord(MySystem.Node,{title:a.title,image:a.image,position:{x:a.x,y:a.y},guid:b},b);
 MySystem.nodesController.deselectObjects(MySystem.nodesController.get("allSelected"));
 MySystem.nodesController.selectObject(c);return YES},diagramSelectionChanged:function(){var a=MySystem.nodesController.get("allSelected");
@@ -247,27 +255,27 @@ this.gotoState("SENTENCE_OBJECT_LINKING_SETUP");return YES}});MySystem.DIAGRAM_O
 var b=MySystem.nodesController.get("allSelected").firstObject();if(!a.isPaneAttached){a.append()
 }a.set("objectToEdit",b)},deleteObject:function(){var a=MySystem.getPath("mainPage.propertyViewPane");
 a.get("objectToEdit").destroy();return YES},tearDownPropertyPane:function(){var a=MySystem.getPath("mainPage.propertyViewPane");
-if(a.isPaneAttached){a.remove()}a.set("objectToEdit",null)},enterState:function(){console.log("Entering state %s",this.get("name"));
-this.setUpPropertyPane()},exitState:function(){console.log("Leaving state %s",this.get("name"));
+if(a.isPaneAttached){a.remove()}a.set("objectToEdit",null)},enterState:function(){SC.Logger.log("Entering state %s",this.get("name"));
+this.setUpPropertyPane()},exitState:function(){SC.Logger.log("Leaving state %s",this.get("name"));
 this.tearDownPropertyPane()},diagramSelectionChanged:function(){var a=MySystem.nodesController.get("allSelected");
 if(a.get("length")!==1){this.gotoState("DIAGRAM_EDITING")}else{if(!a.firstObject().get("linkStyle")){this.gotoState("DIAGRAM_EDITING")
 }else{this.setUpPropertyPane()}}return YES}});MySystem.SENTENCE_OBJECT_LINKING=Ki.State.design({sentenceDiagramConnect:function(a){MySystem.storySentenceController.set("editingSentence",a.sentence);
 this.gotoState("SENTENCE_OBJECT_LINKING_SETUP");return YES},dimAll:function(){MySystem.nodesController.unselectAll();
 MySystem.canvasView.get("classNames").push("sentence-linking");var a=MySystem.store.find("MySystem.Link");
-a.forEach(function(b){console.log("Dimming link %s",b.get("id"));b.set("isDimmed",YES)
+a.forEach(function(b){SC.Logger.log("Dimming link %s",b.get("id"));b.set("isDimmed",YES)
 });return YES},updateHighlighting:function(){var b=function(d){return d.kindOf(MySystem.Link)
 };var a=MySystem.store.find("MySystem.Link");var c=MySystem.nodesController.get("allSelected").filter(b);
-a.forEach(function(d){if(c.indexOf(d)>-1){console.log("Un-dimming link %s",d.get("id"));
-d.set("isDimmed",NO)}else{console.log("Dimming link %s",d.get("id"));d.set("isDimmed",YES)
+a.forEach(function(d){if(c.indexOf(d)>-1){SC.Logger.log("Un-dimming link %s",d.get("id"));
+d.set("isDimmed",NO)}else{SC.Logger.log("Dimming link %s",d.get("id"));d.set("isDimmed",YES)
 }});return YES},diagramSelectionChanged:function(){var a=MySystem.nodesController.get("allSelected");
 var b=MySystem.storySentenceController.get("editingSentence");b.get("links").removeObjects(b.get("links"));
 b.get("nodes").removeObjects(b.get("nodes"));a.forEach(function(c){if(c.instanceOf(MySystem.Link)){b.get("links").pushObject(c)
 }else{if(c.instanceOf(MySystem.Node)){b.get("nodes").pushObject(c)}else{SC.Logger.log("Bad item type "+c)
 }}});this.updateHighlighting();return YES},tearDownSentenceLinkPane:function(){var a=MySystem.getPath("mainPage.sentenceLinkPane");
-if(a.isPaneAttached){a.remove()}MySystem.nodesController.unselectAll()},closeButton:function(){console.log("Got the closeButton event");
+if(a.isPaneAttached){a.remove()}MySystem.nodesController.unselectAll()},closeButton:function(){SC.Logger.log("Got the closeButton event");
 MySystem.storySentenceController.set("editingSentence",null);this.gotoState("DIAGRAM_EDITING");
-return YES},enterState:function(){console.log("Entering state %s",this.get("name"));
-this.updateHighlighting()},exitState:function(){console.log("Leaving state %s",this.get("name"));
+return YES},enterState:function(){SC.Logger.log("Entering state %s",this.get("name"));
+this.updateHighlighting()},exitState:function(){SC.Logger.log("Leaving state %s",this.get("name"));
 var a=MySystem.store.find(MySystem.Link);this.tearDownSentenceLinkPane();a.forEach(function(b){b.set("isDimmed",NO)
 });if(MySystem.canvasView.get("classNames").indexOf("sentence-linking")===MySystem.canvasView.get("classNames").get("length")-1){MySystem.canvasView.get("classNames").pop()
 }else{if(MySystem.canvasView.get("classNames").indexOf("sentence-linking")>-1){MySystem.canvasView.get("classNames").splice(MySystem.canvasView.get("classNames").indexOf("sentence-linking"))
@@ -275,11 +283,11 @@ var a=MySystem.store.find(MySystem.Link);this.tearDownSentenceLinkPane();a.forEa
 },dimAll:function(){MySystem.nodesController.unselectAll();if(MySystem.canvasView.get("classNames").indexOf("sentence-linking")<0){MySystem.canvasView.get("classNames").push("sentence-linking")
 }var a=MySystem.store.find("MySystem.Link");a.forEach(function(b){b.set("isDimmed",YES)
 });return YES},setUpSentenceLinkPane:function(c){var b=MySystem.getPath("mainPage.sentenceLinkPane");
-if(c===null){c=MySystem.storySentenceController.get("editingSentence")}console.log("Now editing linked nodes and links for %s",c.get("id"));
+if(c===null){c=MySystem.storySentenceController.get("editingSentence")}SC.Logger.log("Now editing linked nodes and links for %s",c.get("id"));
 var a=c.get("links");if(!b.isPaneAttached){b.append();b.becomeFirstResponder()}MySystem.canvasView.selectObjects(a,true);
-MySystem.nodesController.selectObjects(c.get("nodes"),true)},enterState:function(){console.log("Entering state %s",this.get("name"));
+MySystem.nodesController.selectObjects(c.get("nodes"),true)},enterState:function(){SC.Logger.log("Entering state %s",this.get("name"));
 var a=MySystem.storySentenceController.get("editingSentence");this.dimAll();this.setUpSentenceLinkPane(a);
-this.gotoState("SENTENCE_OBJECT_LINKING")},exitState:function(){console.log("Leaving state %s",this.get("name"))
+this.gotoState("SENTENCE_OBJECT_LINKING")},exitState:function(){SC.Logger.log("Leaving state %s",this.get("name"))
 }});MySystem.ExceptionHandler={handleException:function(a){if(this.isShowingErrorDialog){return
 }this._displayErrorDialog(a)},_displayErrorDialog:function(b){var a=this._errorDialogHTMLForException(b),c=document.createElement("div");
 c.style.cssText="left: 0px; right: 0px; top: 0px; bottom: 0px; position: absolute; background-color: white; background-color: rgba(255,255,255,0.6); z-index:100;";
@@ -381,13 +389,14 @@ sc_require("views/transformation_canvas");MySystem.TransformationBuilderPane=SC.
 sc_require("views/node");sc_require("views/property_editor");sc_require("views/node_palette");
 sc_require("views/sentence");sc_require("views/sentence_connect_pane");MySystem.mainPage=SC.Page.design({mainPane:SC.MainPane.design({defaultResponder:"MySystem.statechart",childViews:"topView".w(),topView:SC.SplitView.design({defaultThickness:140,topLeftView:MySystem.NodePaletteView.design({layout:{top:0,bottom:0,left:15}}),dividerView:SC.SplitDividerView,bottomRightView:SC.SplitView.design({defaultThickness:150,layoutDirection:SC.LAYOUT_VERTICAL,topLeftView:MySystem.StoriesView,dividerView:SC.SplitDividerView,bottomRightView:MySystem.CanvasView.design({layout:{top:120,left:0,right:0,bottom:0},contentBinding:SC.Binding.from("MySystem.nodesController"),selectionBinding:"MySystem.nodesController.selection",linkSelectionBinding:"MySystem.nodesController.linkSelection",exampleView:MySystem.NodeView})})})}),propertyViewPane:MySystem.PropertyEditorPane,sentenceLinkPane:MySystem.SentenceConnectPane,transformationBuilderPane:MySystem.TransformationBuilderPane.design({}),transformationAnnotaterPane:MySystem.TransformationAnnotationPane.design({})});
 sc_require("lib/old_format_json_parser");MySystem.studentMode=MySystem.ADVANCED_STUDENT;
-MySystem.main=function main(){MySystem.dataSource=SC.CascadeDataSource.create({dataSources:["studentStateDataSource","fixturesDataSource"],studentStateDataSource:MySystem.MergedHashDataSource.create({handledRecordTypes:[MySystem.Link,MySystem.Node,MySystem.Story,MySystem.StorySentence],dataStoreDidUpdateDataHash:function(){SC.$("#my_system_state").text(JSON.stringify(this.get("dataHash"),null,2))
-}}),fixturesDataSource:SC.FixturesDataSource.create({commitRecords:function(){return YES
-}})});MySystem.store=SC.Store.create({commitRecordsAutomatically:YES,setStudentStateDataHash:function(f){this.dataSource.studentStateDataSource.setDataHash(this,f)
-}}).from(MySystem.dataSource);MySystem.updateFromDOM();MySystem.getPath("mainPage.mainPane").append();
-SC.ExceptionHandler=MySystem.ExceptionHandler;var b=MySystem.store.find(MySystem.Node);
-MySystem.nodesController.set("content",b);var e=MySystem.store.find(MySystem.Activity,"assign1");
-MySystem.storyController.set("content",e.get("assignmentText"));MySystem.nodePaletteController.set("content",e.get("paletteItems"));
+MySystem.setupStore=function setupStore(a){a.dataSource=SC.CascadeDataSource.create({dataSources:["studentStateDataSource","fixturesDataSource"],studentStateDataSource:MySystem.MergedHashDataSource.create({handledRecordTypes:[MySystem.Link,MySystem.Node,MySystem.Story,MySystem.StorySentence],dataStoreDidUpdateDataHash:function(){var b=JSON.stringify(this.get("dataHash"),null,2);
+SC.$("#my_system_state").text(b)}}),fixturesDataSource:SC.FixturesDataSource.create({commitRecords:function(){return YES
+}})});a.store=SC.Store.create({commitRecordsAutomatically:YES,setStudentStateDataHash:function(b){this.dataSource.studentStateDataSource.setDataHash(this,b)
+},getStudentStateDataHash:function(){var b=this.dataSource.studentStateDataSource.dataHash();
+return JSON.stringify(b,null,2)}}).from(a.dataSource)};MySystem.main=function main(){MySystem.setupStore(MySystem);
+MySystem.updateFromDOM();MySystem.getPath("mainPage.mainPane").append();SC.ExceptionHandler=MySystem.ExceptionHandler;
+var b=MySystem.store.find(MySystem.Node);MySystem.nodesController.set("content",b);
+var e=MySystem.store.find(MySystem.Activity,"assign1");MySystem.activityController.set("content",e);
 MySystem.energyTypes=[];e.get("energyTypes").forEach(function(f){MySystem.energyTypes.push({label:f.get("label"),color:f.get("color"),isEnabled:f.get("isEnabled")})
 });var a=SC.Query.local(MySystem.StorySentence,{orderBy:"order"});var d=MySystem.store.find(a);
 MySystem.storySentenceController.set("content",d);var c=MySystem.store.find(MySystem.Transformation);
@@ -398,5 +407,7 @@ MySystem.statechart.initStatechart()};function main(){MySystem.main()}MySystem.c
 var b=MySystem.store.find(MySystem.Node);for(c=0;c<b.get("length");++c){b.objectAt(c).destroy()
 }var a=MySystem.store.find(MySystem.Link);for(c=0;c<a.get("length");++c){a.objectAt(c).destroy()
 }};MySystem.loadCanvas=function(){MySystem.clearCanvas();var b=MySystem.store.find(MySystem.StudentState).objectAt(0);
-var a=JSON.parse(b.get("content"));MySystem.parseOldFormatJson(a)};
-if(typeof eventManager != 'undefined'){eventManager.fire('scriptLoaded', 'vle/node/mysystem_sc/js/03_my_system_javascript.js');};
+var a=JSON.parse(b.get("content"));MySystem.parseOldFormatJson(a)};MySystem.loadWiseConfig=function(b,a){SC.run(function(){var c=MySystem.Activity.fromWiseStepDef(b);
+MySystem.activityController.set("content",c);MySystem.energyTypes=[];c.get("energyTypes").forEach(function(d){MySystem.energyTypes.push({label:d.get("label"),color:d.get("color"),isEnabled:d.get("isEnabled")})
+});MySystem.updateFromDOM()})};
+if(typeof eventManager != 'undefined'){eventManager.fire('scriptLoaded', 'vle/node/mysystem2/js/03_my_system_javascript.js');};
