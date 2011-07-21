@@ -58,14 +58,23 @@ this.notifyPropertyChange("dataHash");return YES},getRecordTypeFromName:function
 }if(!a[b]||!a[b][e]){c.pushDestroy(f,e)}}}for(b in a){if(!a.hasOwnProperty(b)){continue
 }f=this.getRecordTypeFromName(b);if(!this.handlesType(f)){continue}d[b]={};for(e in a[b]){if(!a[b].hasOwnProperty(e)){continue
 }c.pushRetrieve(f,e,SC.copy(a[b][e],YES));d[b][e]=SC.copy(a[b][e],YES)}}this._dataHash=d;
-this.notifyPropertyChange("dataHash")}});MySystem.Activity=SC.Record.extend({paletteItems:SC.Record.toMany("MySystem.PaletteItem"),assignmentText:SC.Record.attr(String),energyTypes:SC.Record.toMany("MySystem.EnergyType")});
+this.notifyPropertyChange("dataHash")}});MySystem.Activity=SC.Record.extend({paletteItems:SC.Record.toMany("MySystem.PaletteItem"),assignmentText:SC.Record.attr(String),energyTypes:SC.Record.toMany("MySystem.EnergyType"),diagramRules:SC.Record.toMany("MySystem.DiagramRule")});
 MySystem.Activity.GuidCounter=100;MySystem.Activity.newGuid=function(a){return a+MySystem.Activity.GuidCounter++
-};MySystem.Activity.fromWiseStepDef=function(e){var g=MySystem.Activity.newGuid("actvitiy");
-var d=e.modules;var c=null;var b=MySystem.store.createRecord(MySystem.Activity,{assignmentText:e.prompt,guid:MySystem.Activity.newGuid("activity")});
-var k=d.length;var f=0;for(f=0;f<k;f++){module=d[f];c=MySystem.store.createRecord(MySystem.PaletteItem,{title:module.name,image:module.image},MySystem.Activity.newGuid("palette_item"));
-b.get("paletteItems").pushObject(c)}var a=e.energy_types;k=a.length;var h="";var j=null;
-for(f=0;f<k;f++){h=a[f];j=MySystem.store.createRecord(MySystem.EnergyType,{label:h.label,color:h.color,isEnabled:YES},MySystem.Activity.newGuid("energyType"));
-b.get("energyTypes").pushObject(j)}return b};sc_require("models/activity");MySystem.Activity.FIXTURES=[{guid:"assign1",paletteItems:["pi1","pi2","pi3"],assignmentText:"<p>Make a diagram and story to help explain how <i>both</i> the sun and people's actions affect the Earth's climate.</p><ul><li>Where does the energy originally come from?</li><li>How does the energy move through the system?</li><li>How does the energy change as it moves through the system?</li><li>Where does the energy go in the end?</li></ul>",energyTypes:["et1","et2","et3","et4","et5"]}];
+};MySystem.Activity.fromWiseStepDef=function(g){var k=MySystem.Activity.newGuid("actvitiy");
+var f=g.modules;var e=null;var a=null;var c=MySystem.store.createRecord(MySystem.Activity,{assignmentText:g.prompt,guid:MySystem.Activity.newGuid("activity")});
+var o=f.length;var j=0;for(j=0;j<o;j++){a=f[j];e=MySystem.store.createRecord(MySystem.PaletteItem,{title:a.name,image:a.image},MySystem.Activity.newGuid("palette_item"));
+c.get("paletteItems").pushObject(e)}var b=g.energy_types;o=b.length;var l="";var n=null;
+for(j=0;j<o;j++){l=b[j];n=MySystem.store.createRecord(MySystem.EnergyType,{label:l.label,color:l.color,isEnabled:YES},MySystem.Activity.newGuid("energyType"));
+c.get("energyTypes").pushObject(n)}var d=g.diagram_rules;o=d.length;var h=null;var m=null;
+for(j=0;j<o;j++){m=d[j];h=MySystem.store.createRecord(MySystem.DiagramRule,{suggestion:m.suggestion,comparison:m.comparison,number:m.number,type:m.type},MySystem.Activity.newGuid("diagramRule"));
+c.get("diagramRules").pushObject(h)}return c};sc_require("models/activity");MySystem.Activity.FIXTURES=[{guid:"assign1",paletteItems:["pi1","pi2","pi3"],assignmentText:"<p>Make a diagram and story to help explain how <i>both</i> the sun and people's actions affect the Earth's climate.</p><ul><li>Where does the energy originally come from?</li><li>How does the energy move through the system?</li><li>How does the energy change as it moves through the system?</li><li>Where does the energy go in the end?</li></ul>",energyTypes:["et1","et2","et3","et4","et5"],diagramRules:["dr1"]}];
+MySystem.DiagramRule=SC.Record.extend({suggestion:SC.Record.attr(String),comparison:SC.Record.attr(String),number:SC.Record.attr(Number),type:SC.Record.attr(String),paletteItem:function(){if(this.get("type")=="node"){return null
+}var b=SC.Query.local(MySystem.PaletteItem,"title = {title}",{title:this.get("type")});
+var a=MySystem.store.find(b);return a.objectAt(0)},check:function(a){var b=this.paletteItem(),c=0;
+if(b===null){c=a.get("length")}else{a.forEach(function(d){if(b.get("image").indexOf(d.get("image"))>=0){c++
+}})}switch(this.get("comparison")){case"more than":return c>this.get("number");case"less than":return c<this.get("number");
+case"exactly":return c==this.get("number");default:throw"Invalid comparison value for diagram rule."
+}}});sc_require("models/diagram_rule");MySystem.DiagramRule.FIXTURES=[{guid:"dr1",suggestion:"Diagram needs at least 3 nodes.",comparison:"more than",number:2,type:"node"},{guid:"dr2",suggestion:"At least one node must be Clay.",comparison:"more than",number:0,type:"Clay"}];
 MySystem.EnergyType=SC.Record.extend({label:SC.Record.attr(String,{isRequired:YES,defaultValue:"Energy Flow"}),color:SC.Record.attr(String,{isRequired:YES}),isEnabled:SC.Record.attr(Boolean,{isRequired:YES,defaultValue:YES})});
 sc_require("models/energy_type");MySystem.EnergyType.FIXTURES=[{guid:"et1",label:"infrared radiation",color:"#490A3D",isEnabled:YES},{guid:"et2",label:"thermal energy",color:"#BD1550",isEnabled:YES},{guid:"et3",label:"solar radiation",color:"#E97F02",isEnabled:YES},{guid:"et4",label:"kinetic energy",color:"#F8CA00",isEnabled:YES},{guid:"et5",label:"light energy",color:"#8A9B0F",isEnabled:YES}];
 MySystem.PaletteItem=SC.Record.extend({image:SC.Record.attr(String),title:SC.Record.attr(String)});
@@ -241,8 +250,8 @@ c.forEach(function(f,e,d){this.pushObject(f)},a);b.forEach(function(f,e,d){this.
 }.observes(".nodes.[]",".links.[]")});MySystem.StorySentence.GuidCounter=100;MySystem.StorySentence.newGuid=function(){return"ss"+MySystem.Node.GuidCounter++
 };MySystem.statechart=Ki.Statechart.create({rootState:Ki.State.design({initialSubstate:"DIAGRAM_EDITING",DIAGRAM_EDITING:Ki.State.plugin("MySystem.DIAGRAM_EDITING"),DIAGRAM_OBJECT_EDITING:Ki.State.plugin("MySystem.DIAGRAM_OBJECT_EDITING"),SENTENCE_EDITING:Ki.State.design({commitEdits:function(){this.gotoState("DIAGRAM_EDITING")
 },enterState:function(){SC.Logger.log("Entering state %s",this.get("name"))},exitState:function(){SC.Logger.log("Leaving state %s",this.get("name"))
-}}),SENTENCE_OBJECT_LINKING_SETUP:Ki.State.plugin("MySystem.SENTENCE_OBJECT_LINKING_SETUP"),SENTENCE_OBJECT_LINKING:Ki.State.plugin("MySystem.SENTENCE_OBJECT_LINKING"),checkDiagramAgainstConstraints:function(){var a=MySystem.store.find(MySystem.Node),b=0;
-a.forEach(function(c){if(/clay/.test(c.get("image"))){b++}});if(b>2){SC.AlertPane.warn("You may have too many clay nodes in your diagram.")
+}}),SENTENCE_OBJECT_LINKING_SETUP:Ki.State.plugin("MySystem.SENTENCE_OBJECT_LINKING_SETUP"),SENTENCE_OBJECT_LINKING:Ki.State.plugin("MySystem.SENTENCE_OBJECT_LINKING"),checkDiagramAgainstConstraints:function(){var c=MySystem.store.find(MySystem.DiagramRule),b=MySystem.store.find(MySystem.Node),a=[];
+c.forEach(function(d){if(!d.check(b)){a.pushObject(d.get("suggestion"))}});if(a.get("length")>0){SC.AlertPane.warn(a.join(" "))
 }else{SC.AlertPane.info("Your diagram has no obvious problems.")}}})});MySystem.DIAGRAM_EDITING=Ki.State.design({enterState:function(){SC.Logger.log("Entering state %s",this.get("name"))
 },exitState:function(){SC.Logger.log("Leaving state %s",this.get("name"))},addNode:function(a){var c;
 var b=MySystem.Node.newGuid();c=MySystem.store.createRecord(MySystem.Node,{title:a.title,image:a.image,position:{x:a.x,y:a.y},guid:b},b);
