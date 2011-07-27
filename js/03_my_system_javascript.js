@@ -66,15 +66,21 @@ var o=f.length;var j=0;for(j=0;j<o;j++){a=f[j];e=MySystem.store.createRecord(MyS
 c.get("paletteItems").pushObject(e)}var b=g.energy_types;o=b.length;var l="";var n=null;
 for(j=0;j<o;j++){l=b[j];n=MySystem.store.createRecord(MySystem.EnergyType,{label:l.label,color:l.color,isEnabled:YES},MySystem.Activity.newGuid("energyType"));
 c.get("energyTypes").pushObject(n)}var d=g.diagram_rules;o=d.length;var h=null;var m=null;
-for(j=0;j<o;j++){m=d[j];h=MySystem.store.createRecord(MySystem.DiagramRule,{suggestion:m.suggestion,comparison:m.comparison,number:m.number,type:m.type},MySystem.Activity.newGuid("diagramRule"));
-c.get("diagramRules").pushObject(h)}return c};sc_require("models/activity");MySystem.Activity.FIXTURES=[{guid:"assign1",paletteItems:["pi1","pi2","pi3"],assignmentText:"<p>Make a diagram and story to help explain how <i>both</i> the sun and people's actions affect the Earth's climate.</p><ul><li>Where does the energy originally come from?</li><li>How does the energy move through the system?</li><li>How does the energy change as it moves through the system?</li><li>Where does the energy go in the end?</li></ul>",energyTypes:["et1","et2","et3","et4","et5"],diagramRules:["dr1"]}];
-MySystem.DiagramRule=SC.Record.extend({suggestion:SC.Record.attr(String),comparison:SC.Record.attr(String),number:SC.Record.attr(Number),type:SC.Record.attr(String),paletteItem:function(){if(this.get("type")=="node"){return null
-}var b=SC.Query.local(MySystem.PaletteItem,"title = {title}",{title:this.get("type")});
-var a=MySystem.store.find(b);return a.objectAt(0)},check:function(a){var b=this.paletteItem(),c=0;
-if(b===null){c=a.get("length")}else{a.forEach(function(d){if(b.get("image").indexOf(d.get("image"))>=0){c++
-}})}switch(this.get("comparison")){case"more than":return c>this.get("number");case"less than":return c<this.get("number");
-case"exactly":return c==this.get("number");default:throw"Invalid comparison value for diagram rule."
-}}});sc_require("models/diagram_rule");MySystem.DiagramRule.FIXTURES=[{guid:"dr1",suggestion:"Diagram needs at least 3 nodes.",comparison:"more than",number:2,type:"node"},{guid:"dr2",suggestion:"At least one node must be Clay.",comparison:"more than",number:0,type:"Clay"}];
+for(j=0;j<o;j++){m=d[j];h=MySystem.store.createRecord(MySystem.DiagramRule,m,MySystem.Activity.newGuid("diagramRule"));
+c.get("diagramRules").pushObject(h)}return c};sc_require("models/activity");MySystem.Activity.FIXTURES=[{guid:"assign1",paletteItems:["pi1","pi2","pi3"],assignmentText:"<p>Make a diagram and story to help explain how <i>both</i> the sun and people's actions affect the Earth's climate.</p><ul><li>Where does the energy originally come from?</li><li>How does the energy move through the system?</li><li>How does the energy change as it moves through the system?</li><li>Where does the energy go in the end?</li></ul>",energyTypes:["et1","et2","et3","et4","et5"],diagramRules:["dr1","dr2","dr3","dr4"]}];
+MySystem.DiagramRule=SC.Record.extend({suggestion:SC.Record.attr(String),comparison:SC.Record.attr(String),number:SC.Record.attr(Number),type:SC.Record.attr(String),hasLink:SC.Record.attr(Boolean),linkDirection:SC.Record.attr(String),otherNodeType:SC.Record.attr(String),paletteItem:function(a){if(a=="node"){return null
+}var c=SC.Query.local(MySystem.PaletteItem,"title = {title}",{title:a});var b=MySystem.store.find(c);
+return b.objectAt(0)},check:function(a){var b=this.matches(a);switch(this.get("comparison")){case"more than":return b>this.get("number");
+case"less than":return b<this.get("number");case"exactly":return b==this.get("number");
+default:throw"Invalid comparison value for diagram rule."}},checkNode:function(b,a){if(b===null){return true
+}else{return b.get("image").indexOf(a.get("image"))>=0}},checkLink:function(b,c,a){return this.checkNode(c,b.get("startNode"))&&this.checkNode(a,b.get("endNode"))
+},matches:function(b){var d=this.paletteItem(this.get("type")),e=0;if(this.get("hasLink")){var c=this.paletteItem(this.get("otherNodeType")),a=MySystem.store.find(MySystem.Link);
+switch(this.get("linkDirection")){case"-->":a.forEach(function(f){if(f.isComplete()&&this.checkLink(f,d,c)){e++
+}},this);break;case"<--":a.forEach(function(f){if(f.isComplete()&&this.checkLink(f,c,d)){e++
+}},this);break;case"---":a.forEach(function(f){if(f.isComplete()&&(this.checkLink(f,d,c)||this.checkLink(f,c,d))){e++
+}},this);break;default:throw"Invalid linkDirection value for diagram rule."}return e
+}else{if(d===null){return b.get("length")}else{b.forEach(function(f){if(this.checkNode(d,f)){e++
+}},this);return e}}}});sc_require("models/diagram_rule");MySystem.DiagramRule.FIXTURES=[{guid:"dr1",suggestion:"Diagram needs at least 3 nodes.",comparison:"more than",number:2,type:"node"},{guid:"dr2",suggestion:"At least one node must be Clay.",comparison:"more than",number:0,type:"Clay"},{guid:"dr3",suggestion:"At least one Clay node linked to a Hand node.",comparison:"more than",number:0,type:"Clay",hasLink:true,linkDirection:"-->",otherNodeType:"Hand"},{guid:"dr4",suggestion:"Diagram needs at least 2 links.",comparison:"more than",number:1,type:"node",hasLink:true,linkDirection:"---",otherNodeType:"node"}];
 MySystem.EnergyType=SC.Record.extend({label:SC.Record.attr(String,{isRequired:YES,defaultValue:"Energy Flow"}),color:SC.Record.attr(String,{isRequired:YES}),isEnabled:SC.Record.attr(Boolean,{isRequired:YES,defaultValue:YES})});
 sc_require("models/energy_type");MySystem.EnergyType.FIXTURES=[{guid:"et1",label:"infrared radiation",color:"#490A3D",isEnabled:YES},{guid:"et2",label:"thermal energy",color:"#BD1550",isEnabled:YES},{guid:"et3",label:"solar radiation",color:"#E97F02",isEnabled:YES},{guid:"et4",label:"kinetic energy",color:"#F8CA00",isEnabled:YES},{guid:"et5",label:"light energy",color:"#8A9B0F",isEnabled:YES}];
 MySystem.PaletteItem=SC.Record.extend({image:SC.Record.attr(String),title:SC.Record.attr(String)});
@@ -250,7 +256,7 @@ c.forEach(function(f,e,d){this.pushObject(f)},a);b.forEach(function(f,e,d){this.
 }.observes(".nodes.[]",".links.[]")});MySystem.StorySentence.GuidCounter=100;MySystem.StorySentence.newGuid=function(){return"ss"+MySystem.Node.GuidCounter++
 };MySystem.statechart=Ki.Statechart.create({rootState:Ki.State.design({initialSubstate:"DIAGRAM_EDITING",DIAGRAM_EDITING:Ki.State.plugin("MySystem.DIAGRAM_EDITING"),DIAGRAM_OBJECT_EDITING:Ki.State.plugin("MySystem.DIAGRAM_OBJECT_EDITING"),SENTENCE_EDITING:Ki.State.design({commitEdits:function(){this.gotoState("DIAGRAM_EDITING")
 },enterState:function(){SC.Logger.log("Entering state %s",this.get("name"))},exitState:function(){SC.Logger.log("Leaving state %s",this.get("name"))
-}}),SENTENCE_OBJECT_LINKING_SETUP:Ki.State.plugin("MySystem.SENTENCE_OBJECT_LINKING_SETUP"),SENTENCE_OBJECT_LINKING:Ki.State.plugin("MySystem.SENTENCE_OBJECT_LINKING"),checkDiagramAgainstConstraints:function(){var c=MySystem.store.find(MySystem.DiagramRule),b=MySystem.store.find(MySystem.Node),a=[];
+}}),SENTENCE_OBJECT_LINKING_SETUP:Ki.State.plugin("MySystem.SENTENCE_OBJECT_LINKING_SETUP"),SENTENCE_OBJECT_LINKING:Ki.State.plugin("MySystem.SENTENCE_OBJECT_LINKING"),checkDiagramAgainstConstraints:function(){var c=MySystem.activityController.get("diagramRules"),b=MySystem.store.find(MySystem.Node),a=[];
 c.forEach(function(d){if(!d.check(b)){a.pushObject(d.get("suggestion"))}});if(a.get("length")>0){SC.AlertPane.warn(a.join(" "))
 }else{SC.AlertPane.info("Your diagram has no obvious problems.")}}})});MySystem.DIAGRAM_EDITING=Ki.State.design({enterState:function(){SC.Logger.log("Entering state %s",this.get("name"))
 },exitState:function(){SC.Logger.log("Leaving state %s",this.get("name"))},addNode:function(a){var c;
