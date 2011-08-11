@@ -85,10 +85,6 @@ h1{font-size:138.5%}h2{font-size:123.1%}h3{font-size:108%}h1,h2,h3{margin:1em 0}
 
 
 /* >>>>>>>>>> BEGIN stylesheet.css */
-.sc-text-field-view .sc-hint{top:0px;left:0px;right:0px;bottom:0px}.sc-text-field-view textarea,.sc-text-field-view input{white-space:pre-wrap;overflow:hidden}.sc-label-view.forms-label{white-space:pre-wrap}.sc-form-row-view{overflow:visible}.sc-form-field-view{overflow:visible}.sc-radio-button .sc-button-label{white-space:pre}
-
-
-/* >>>>>>>>>> BEGIN stylesheet.css */
 .__s38_0,.ace.sc-small-size.button > .left{background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAASCAQAAAA0q6wKAAAAYUlEQVR4nGPaxLBJeuMKJgb1f5flw5mYulUE5RmY/rqIM/xnYPrHycTAwMD0nwEEgcy/QAjkQal/QIgQhPLAFJTH8vMviBK49xZEac199eM1A5P4fMcZ/68xbXzH32DbAgBpli47vZ+cMQAAAABJRU5ErkJggg==");
 *background-image: expression('url("mhtml:' + document.location.protocol + '//' + document.location.host + '/static/sproutcore/ace/en/c2f6e6c8a7fbfddd3f626c088f3c87eed09906a2/__sc_chance_mhtml.txt!__s38_0' + '")')
 }.__s38_1,.ace.sc-small-size.button > .middle{background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAASCAQAAAAwXnw3AAAAJ0lEQVR4nGPa8ITJUpqJjYHpPwMTA5j8C0b/YCQy+s3AdO8jk18XAJg5EJ4spCvqAAAAAElFTkSuQmCC");
