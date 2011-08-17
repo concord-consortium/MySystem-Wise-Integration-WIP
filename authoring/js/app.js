@@ -12,12 +12,17 @@ MSA.setupParentIFrame = function(dataHash, updateObject, updateFn) {
 
   MSA.data = dataHash;
 
+  MSA.set('activity', MSA.ActivityModel.create({dataHash: MSA.data}));
   MSA.modulesController.setExternalContent(dataHash.modules);
   MSA.energyTypesController.setExternalContent(dataHash.energy_types);
   MSA.diagramRulesController.setExternalContent(dataHash.diagram_rules);
 
   MSA.dataController.addObserver('data', updateObject, updateFn);
 };
+
+MSA.ActivityModel = SCUtil.ModelObject.extend({
+  maxFeedbackItems: SCUtil.dataHashProperty
+});
 
 MSA.Module = SCUtil.ModelObject.extend( SCUtil.UUIDModel, {
   name: SCUtil.dataHashProperty,
@@ -66,10 +71,10 @@ if (top === self) {
   MSA.data = {
     "modules": [],
     "energy_types": [],
-    "diagram_rules": []
+    "diagram_rules": [],
+    "maxFeedbackItems": 0
   };
 }
-
 
 MSA.modulesController = SCUtil.ModelArray.create({
   content: MSA.data.modules,
@@ -97,7 +102,33 @@ MSA.diagramRulesController = SCUtil.ModelArray.create({
   
   shouldOptions: ['should', 'should not'],
   
-  linkDirections: ['-->', '<--', '---']
+  linkDirections: ['-->', '<--', '---'],
+
+  moveItemUp: function(button) {
+    var c = this.get('content');
+    var item = button.get('item');
+    var i = c.indexOf(item.get('dataHash'));
+
+    if (i > 0) {
+      this.contentWillChange();
+      var itemBefore = this.objectAt(i-1);
+      this.replaceContent(i-1, 2, [item, itemBefore]);
+      this.contentDidChange();
+    }
+  },
+
+  moveItemDown: function(button) {
+    var c = this.get('content');
+    var item = button.get('item');
+    var i = c.indexOf(item.get('dataHash'));
+
+    if (i < (c.length-1)) {
+      this.contentWillChange();
+      var itemAfter = this.objectAt(i+1);
+      this.replaceContent(i, 2, [itemAfter, item]);
+      this.contentDidChange();
+    }
+  },
 });
 
 MSA.dataController = SC.Object.create({
@@ -106,7 +137,8 @@ MSA.dataController = SC.Object.create({
   }.property('MSA.modulesController.[]', 
              'MSA.modulesController.@each.rev', 
              'MSA.energyTypesController.@each.rev', 
-             'MSA.diagramRulesController.@each.rev')
+             'MSA.diagramRulesController.@each.rev',
+             'MSA.activity.maxFeedbackItems')
 });
 
 MSA.NodeTypesView = SC.CollectionView.extend({
