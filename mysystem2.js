@@ -7,8 +7,6 @@ function Mysystem2(node,view) {
   this.node = node;
   this.content = node.getContent().getContentJSON();
 
-  // TODO: This is a bit hackety, pulling a MySytem-ref out of the inner-frame
-  this.MySystem = MySystem;
   this.domIO = document.getElementById('my_system_state');
 
   if (node.studentWork != 'undefined' && node.studentWork != null) {
@@ -38,11 +36,35 @@ Mysystem2.prototype.render = function() {
     var latestResponse = latestState.response;
     this.domIO.textContent = latestResponse;
   }
+  
+  // It turns out that sometimes when firebug is enabled and reloading
+  // the page and switching back to the step: The SC.onReady.done method is never called
+  // which should mean the jquery ready method is never called either.  
+  // It seems this has to do with how the step iframe is setup. Its contents are injected
+  // instead of loading it from a url.  So far the approach below seems to fix this problem
+  // and not cause other problems.
+  if(!SC.isReady) {
+    SC.onReady.done();
+  }
+
+  var lastRenewal = 0;
+  if (typeof eventManager != 'undefined') {
+    // watch for changes to the student data and renew the session whenever it changes
+    $('#my_system_state').bind("DOMSubtreeModified", function() {
+      var now = new Date().getTime();
+      if (now - lastRenewal > 15000) {  // only renew at most once every 15 seconds
+        SC.Logger.log("renewing session");
+        eventManager.fire('renewSession');
+        lastRenewal = now;
+      }
+    });
+  }
+
   if (this.content) {
-    this.MySystem.loadWiseConfig(this.content,latestState);
+    MySystem.loadWiseConfig(this.content,latestState);
   }
   if (latestState) {
-    this.MySystem.updateFromDOM();
+    MySystem.updateFromDOM();
   }
 };
 
@@ -65,7 +87,7 @@ Mysystem2.prototype.getLatestState = function() {
 // we leave a step, and allows us to perform any final or cleanup work before
 // we save.
 Mysystem2.prototype.preSave = function() {
-  this.MySystem.preExternalSave();
+  MySystem.preExternalSave();
 };
 
 /**
