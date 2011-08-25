@@ -6,10 +6,10 @@
     <meta http-equiv="Content-Script-Type" content="text/javascript" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="my_system_sc_git_sha"    content ="3f390dd8968cadd7d4e7daf1d9de26e754bed2d9" />
-    <meta name="my_system_sc_git_time"   content ="Mon Aug 22 16:10:25 2011 -0400" />
+    <meta name="my_system_sc_git_sha"    content ="11ec21d0a07ef3a99b02837625594e9c3a02b935" />
+    <meta name="my_system_sc_git_time"   content ="Wed Aug 24 14:17:38 2011 -0400" />
     <meta name="my_system_sc_git_branch" content ="(HEAD, learner_data_v2)" />
-    <meta name="sc_build_time"           content ="2011-08-22 16:19:05 -0400" />
+    <meta name="sc_build_time"           content ="2011-08-25 07:54:22 -0400" />
     <meta name="sc_build_number"         content ="60c40c1785e107f3959b7817eb1e6c077cdb7b5f" />
     <meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <link rel="apple-touch-icon" href="images/00_my_system_sproutcore-logo.png" />
@@ -21,7 +21,14 @@
 
   <script type="text/javascript">
 
-
+// The following 2 lines added 8-24-11 to force SC to bootstrap itself in WISE4 every time the user navigates to
+// the MySystem step. (WISE4 dynamically inserts this file into an iframe, and does not clear the javascript context of
+// the iframe element when loading new files in. Thus navigating away from a MySystem step does not remove SC from the
+// iframe context; and, upone navigating back to the MySystem step, the SC bootstrap code is not loaded)
+//
+window.SC = undefined;
+window['__SC__'] = undefined;
+  
 /* >>>>>>>>>> BEGIN source/system/browser.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
