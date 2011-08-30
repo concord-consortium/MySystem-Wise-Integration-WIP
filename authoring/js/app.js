@@ -8,20 +8,36 @@ MSA.setupParentIFrame = function(dataHash, updateObject, updateFn) {
     dataHash.diagram_rules = [];
   }
 
+  if (!dataHash.minimum_requirements) {
+    dataHash.minimum_requirements = [];
+  }
+
   // TODO: migrate objects to have uuids that don't already have them
 
+  MSA.loadData(dataHash);
+
+  MSA.dataController.addObserver('data', updateObject, updateFn);
+};
+
+MSA.loadData = function(dataHash) {
   MSA.data = dataHash;
 
   MSA.set('activity', MSA.ActivityModel.create({dataHash: MSA.data}));
   MSA.modulesController.setExternalContent(dataHash.modules);
   MSA.energyTypesController.setExternalContent(dataHash.energy_types);
   MSA.diagramRulesController.setExternalContent(dataHash.diagram_rules);
-
-  MSA.dataController.addObserver('data', updateObject, updateFn);
+  MSA.minRequirementsController.setExternalContent(dataHash.minimum_requirements);
 };
 
 MSA.ActivityModel = SCUtil.ModelObject.extend({
-  maxFeedbackItems: SCUtil.dataHashProperty
+  correctFeedback: SCUtil.dataHashProperty,
+  maxFeedbackItems: SCUtil.dataHashProperty,
+  minimumRequirementsFeedback: SCUtil.dataHashProperty,
+  enableNodeDescriptionEditing: SCUtil.dataHashProperty,
+  enableLinkDescriptionEditing: SCUtil.dataHashProperty,
+  enableLinkLabelEditing: SCUtil.dataHashProperty,
+  enableCustomRuleEvaluator: SCUtil.dataHashProperty,
+  customRuleEvaluator: SCUtil.dataHashProperty
 });
 
 MSA.Module = SCUtil.ModelObject.extend( SCUtil.UUIDModel, {
@@ -54,10 +70,12 @@ MSA.DiagramRule = SCUtil.ModelObject.extend({
   otherNodeType: SCUtil.dataHashProperty,
   energyType: SCUtil.dataHashProperty,
   not: SCUtil.dataHashProperty,
-  shouldOption: "should",
-  updateNot: function() {
-    this.set('not', this.get('shouldOption') != "should");
-  }.observes('shouldOption'),
+  shouldOption: function(key, value) {
+    if (value){
+      this.set("not", value !== "should");
+    }
+    return this.get("not") ? "should not" : "should";
+  }.property('not'),
   toggleHasLink: function(){
     this.set('hasLink', !this.get('hasLink'));
   }
@@ -72,7 +90,15 @@ if (top === self) {
     "modules": [],
     "energy_types": [],
     "diagram_rules": [],
-    "maxFeedbackItems": 0
+    "correctFeedback": "Your diagram has no obvious problems.",
+    "minimum_requirements": [],
+    "maxFeedbackItems": 0,
+    "minimumRequirementsFeedback": "Your diagram doesn't have enough elements.",
+    "enableNodeDescriptionEditing": false,
+    "enableLinkDescriptionEditing": false,
+    "enableLinkLabelEditing": false,
+    "enableCustomRuleEvaluator": false,
+    "customRuleEvaluator": ""
   };
 }
 
@@ -86,22 +112,21 @@ MSA.energyTypesController = SCUtil.ModelArray.create({
   modelType: MSA.EnergyType
 });
 
-MSA.diagramRulesController = SCUtil.ModelArray.create({
-  content: MSA.data.diagram_rules,
+MSA.RulesController = SCUtil.ModelArray.extend({
   modelType: MSA.DiagramRule,
 
   nodeTypes: function (){
     return MSA.modulesController.mapProperty('name').insertAt(0, 'node');
   }.property('MSA.modulesController.[]', 'MSA.modulesController.@each.name').cacheable(),
-  
+
   energyTypes: function() {
     return MSA.energyTypesController.mapProperty('label').insertAt(0, 'any');
   }.property('MSA.energyTypesController.[]', 'MSA.energyTypesController.@each.label').cacheable(),
-  
+
   comparisons: ['more than', 'less than', 'exactly'],
-  
+
   shouldOptions: ['should', 'should not'],
-  
+
   linkDirections: ['-->', '<--', '---'],
 
   moveItemUp: function(button) {
@@ -128,7 +153,19 @@ MSA.diagramRulesController = SCUtil.ModelArray.create({
       this.replaceContent(i, 2, [itemAfter, item]);
       this.contentDidChange();
     }
-  },
+  }
+});
+
+MSA.diagramRulesController = MSA.RulesController.create({
+  content: MSA.data.diagram_rules
+});
+
+MSA.minRequirementsController = MSA.RulesController.create({
+  content: MSA.data.minimum_requirements,
+  updateHasRequirements: function() {
+    this.set('hasRequirements', (this.getPath('content.length') > 0));
+  }.observes('content.length'),
+  hasRequirements: NO
 });
 
 MSA.dataController = SC.Object.create({
@@ -138,7 +175,15 @@ MSA.dataController = SC.Object.create({
              'MSA.modulesController.@each.rev', 
              'MSA.energyTypesController.@each.rev', 
              'MSA.diagramRulesController.@each.rev',
-             'MSA.activity.maxFeedbackItems')
+             'MSA.minRequirementsController.@each.rev',
+             'MSA.activity.correctFeedback',
+             'MSA.activity.minimumRequirementsFeedback',
+             'MSA.activity.enableNodeDescriptionEditing',
+             'MSA.activity.enableLinkDescriptionEditing',
+             'MSA.activity.enableLinkLabelEditing',
+             'MSA.activity.maxFeedbackItems',
+             'MSA.activity.enableCustomRuleEvaluator',
+             'MSA.activity.customRuleEvaluator')
 });
 
 MSA.NodeTypesView = SC.CollectionView.extend({
