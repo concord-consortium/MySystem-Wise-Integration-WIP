@@ -52,5 +52,13 @@ InitialMySystemData = {
     }
  ],
  "diagram_rules": [],
- "maxFeedbackItems": 0
+ "minimum_requirements": [],
+ "correctFeedback": "Your diagram has no obvious problems.",
+ "maxFeedbackItems": 0,
+ "minimumRequirementsFeedback": "",
+ "enableNodeDescriptionEditing": false,
+ "enableLinkDescriptionEditing": false,
+ "enableLinkLabelEditing": false,
+ "enableCustomRuleEvaluator": false,
+ "customRuleEvaluator": ""
 };

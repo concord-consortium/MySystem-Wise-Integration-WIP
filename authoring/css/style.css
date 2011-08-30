@@ -86,8 +86,44 @@ a:hover { color: #036; }
     \\ ========================================== //
 */
 
+h1 {
+  font-size: 130%;
+  padding: 4px;
+}
 
+h2 {
+  font-size: 120%;
+  padding: 3px;
+  padding-left: 6px;
+  background-color: #DDDDDD;
+}
 
+h3 {
+  padding: 2px;
+  padding-left: 10px;
+}
+
+.options_block {
+  padding: 4px;
+  margin: 8px;
+  background-color: #EEEEEE;
+  border: 1px solid #DDDDDD;
+}
+
+.add_button {
+  margin: 5px;
+  margin-left: 15px;
+  padding-left: 18px;
+  background: url(../images/add-15px.png) no-repeat left;
+}
+
+input {
+  margin: 2px;
+}
+
+#correctFeedback, #minimumFeedback {
+  width: 300px;
+}
 
 
 

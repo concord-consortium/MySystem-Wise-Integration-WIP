@@ -51,11 +51,11 @@ View.prototype.Mysystem2Node.getBuildInfoDiv = function() {
   var sc_build_time_div   = createElement(document, 'div', {id: 'sc_build_time'  }) ;
   var sc_build_number_div = createElement(document, 'div', {id: 'sc_build_number'}) ;
 
-  var git_sha         = document.createTextNode("commit sha  : 11ec21d0a07ef3a99b02837625594e9c3a02b935 ");
-  var git_time        = document.createTextNode("commit time : Wed Aug 24 14:17:38 2011 -0400 ");
-  var git_branch      = document.createTextNode("git branch  : (HEAD, learner_data_v2) ");
-  var sc_build_time   = document.createTextNode("build time  : 2011-08-25 07:54:22 -0400 ");
-  var sc_build_number = document.createTextNode("build no.   : 60c40c1785e107f3959b7817eb1e6c077cdb7b5f ");
+  var git_sha         = document.createTextNode("commit sha  : e00b8b8fed3ea5e416f582e36a1b74e282c9cff9 ");
+  var git_time        = document.createTextNode("commit time : Tue Aug 30 18:26:19 2011 -0400 ");
+  var git_branch      = document.createTextNode("git branch  : (HEAD, 30_08_11_release, origin/master, origin/HEAD, master) ");
+  var sc_build_time   = document.createTextNode("build time  : 2011-08-30 18:37:01 -0400 ");
+  var sc_build_number = document.createTextNode("build no.   : 1254ed158126c7e051231aecc102450a2d501ea0 ");
   
   git_sha_div.appendChild(git_sha);
   git_time_div.appendChild(git_time);
