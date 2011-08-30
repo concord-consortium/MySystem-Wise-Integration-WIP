@@ -35,7 +35,7 @@ Otherwise *your local changes will be overwritten*.
     MySystem Git Sha :   45cec258b761432052a9e828f852bffb21198abb
     Git commit time  :   Tue Aug 30 18:08:33 2011 -0400
     Git Branch / refs:   (HEAD, origin/master, origin/HEAD, master)
-    Build Time       :   2011-08-30 18:09:52 -0400
+    Build Time       :   2011-08-30 18:21:40 -0400
     SproutCore Build :   1254ed158126c7e051231aecc102450a2d501ea0
 
 [45cec25]: https://github.com/concord-consortium/mysystem_sc/commits/45cec258b761432052a9e828f852bffb21198abb
