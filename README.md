@@ -35,8 +35,8 @@ Otherwise *your local changes will be overwritten*.
     MySystem Git Sha :   4f8537517b3688bc26af30ecaa60ab8add6a3cfb
     Git commit time  :   Wed Feb 15 16:57:54 2012 -0500
     Git Branch / refs:   (HEAD, origin/master, origin/HEAD, styleFeedback, master)
-    Build Time       :   2012-02-15 17:13:09 -0500
-    SproutCore Build :   cfe651d101c2c79598bb56006d09535a57f79cf8
+    Build Time       :   2012-02-15 17:44:12 -0500
+    SproutCore Build :   fb78d358c0edd6c9958a470485df4e3499c9dfc6
 
 [4f85375]: https://github.com/concord-consortium/mysystem_sc/commits/4f8537517b3688bc26af30ecaa60ab8add6a3cfb
 [This repository]: https://github.com/concord-consortium/MySystem-Wise-Integration-WIP
