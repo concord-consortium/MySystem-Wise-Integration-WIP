@@ -18,7 +18,7 @@ The build process uses ruby. We recommend installing the Ruby Version Manager [r
 1. checkout [This repository][] `git clone https://<username>@github.com/concord-consortium/MySystem-Wise-Integration-WIP.git`
 1. enter the directory: `cd MySystem-Wise-Integration-WIP`
 1. copy the files over: `cp -r ../mysystem_sc/vle/node/mysystem2/* .`
-1. commit your changes: `git ci -a -m "commit message here\n\n built from: afe4758"`
+1. commit your changes: `git ci -a -m "commit message here\n\n built from: c36b4a2"`
 1. optionally tag the commit: `git tag -a <tagName> -m "<more info here>"`
 1. push the changes: `git push --tags`
 
@@ -30,15 +30,15 @@ Update `wise4/mysystem2/README.md.erb` To have your changes appear here.
 Otherwise *your local changes will be overwritten*.
 
 
-## Current [MySystem][] ( [afe4758][] ) Version fronzen into [This repository][]
+## Current [MySystem][] ( [c36b4a2][] ) Version fronzen into [This repository][]
 
-    MySystem Git Sha :   afe47587514a25a4325854cdff07320237874a79
-    Git commit time  :   Wed Feb 15 17:53:28 2012 -0500
-    Git Branch / refs:   (HEAD, origin/master, origin/HEAD, master)
-    Build Time       :   2012-02-16 20:31:43 -0500
-    SproutCore Build :   fb78d358c0edd6c9958a470485df4e3499c9dfc6
+    MySystem Git Sha :   c36b4a205745a8c5379e59d1eeeec937117a7a46
+    Git commit time  :   Fri Mar 23 15:24:04 2012 -0400
+    Git Branch / refs:   (HEAD, origin/master, origin/HEAD, master, dynamic_resize_links)
+    Build Time       :   2012-03-23 17:00:12 -0400
+    SproutCore Build :   1fdc0266e43e8748c1305b0584ed5ab2125b308a
 
-[afe4758]: https://github.com/concord-consortium/mysystem_sc/commits/afe47587514a25a4325854cdff07320237874a79
+[c36b4a2]: https://github.com/concord-consortium/mysystem_sc/commits/c36b4a205745a8c5379e59d1eeeec937117a7a46
 [This repository]: https://github.com/concord-consortium/MySystem-Wise-Integration-WIP
 [WISE4]: http://wise4.org
 [MySystem]: https://github.com/concord-consortium/mysystem_sc
