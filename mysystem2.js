@@ -4,7 +4,7 @@
  * the step when the students work on it. An instance of this object will
  * be created in the .html for this step (look at mysystem.html)
  */
-function Mysystem2(node,view) {
+function Mysystem2(node,view,secondTime) {
   this.node = node;
   this.content = node.getContent().getContentJSON();
 
@@ -25,6 +25,9 @@ function Mysystem2(node,view) {
   
   this.mostRecentSavedState = null;
   this.hasRegisteredDomListeners = false;
+  if(secondTime == true) {
+    this.hasRegisteredDomListeners = true;
+  }
 }
 
 Mysystem2.prototype.saveTriggeredByMySystem = function(isSubmit) {
@@ -80,7 +83,7 @@ Mysystem2.prototype.keepStudentLogedIn = function() {
   // only register dom listeners once...
   if (!this.hasRegisteredDomListeners) {
     var lastRenewal = 0;
-    var interval    = 30; // 5 seconds
+    var interval    = 30; // seconds
       if (typeof eventManager != 'undefined') {
       // watch for changes to the student data and renew the session whenever it changes
       $('#my_system_state').bind("DOMSubtreeModified", function() {
