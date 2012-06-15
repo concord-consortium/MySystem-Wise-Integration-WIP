@@ -68,7 +68,11 @@ Mysystem2.prototype.render = function() {
   }
 
   if (this.content) {
-    MySystem.loadWiseConfig(this.content,latestState);
+    // not sure why we are getting called when its not a
+    // mysystem 2 state -- but it happens.
+    if (this.content['type'] === "mysystem2") {
+      MySystem.loadWiseConfig(this.content,latestState);
+    }
   }
 
   if (latestState) {
@@ -126,7 +130,7 @@ Mysystem2.prototype.getLatestState = function() {
       state = this.states[i];
       // because of WISE4 corruption issues, reject states that may have been saved to our states array
       // by non-MySystem steps such as openresponse steps
-      if (state.type === "MySystem2" || (typeof state.type === 'undefined' && numberOfOwnProperties(state) === 1)) {
+      if (state.type === "mysystem2" || (typeof state.type === 'undefined' && numberOfOwnProperties(state) === 1)) {
         latestState = state;
         break;
       }
@@ -155,6 +159,10 @@ Mysystem2.prototype.save = function(isSubmit) {
   var response,
       state;
 
+  // sometimes we are called without a dom element, in which case,
+  // return immediately...
+  if (this.domIO === null) { return; }
+  
   // We use a simple dom element for our data passing
   response =this.domIO.textContent;
   
