@@ -28,6 +28,7 @@
       </div>
     <h3>Nodes</h3>
       <div style="padding-left: 20px;">
+        {{view SC.Checkbox title="Enable Label Display" valueBinding="MSA.activity.enableNodeLabelDisplay" id="enableNodeLabelDisplay"}}
         {{view SC.Checkbox title="Enable Label Editing" valueBinding="MSA.activity.enableNodeLabelEditing" id="nodeLabelEditing"}}
         {{view SC.Checkbox title="Enable Description Editing" valueBinding="MSA.activity.enableNodeDescriptionEditing" id="nodeDescriptionEditing"}}
       </div>
@@ -77,6 +78,28 @@
           }}
       </p>
   </div>
+
+  <!-- background images -->
+  <div class="options_block">
+    <h2> Background Image</h2>
+    <p>
+        Background Image:
+        {{
+          view MSA.TextField 
+          valueBinding = "MSA.activity.backgroundImage"
+          placeholder  = ""
+          id           = "backgroundImage"
+          size         = "40"
+        }}
+    <p>
+    <div style="padding-left: 20px;">
+      {{view SC.Checkbox 
+        title="Scale background images to fit:" 
+        valueBinding="MSA.activity.backgroundImageScaling" 
+        id="backgroundImageScaling"}}
+    </div>
+  </div>
+
   <div class="options_block">
     <h2>Energy Types</h2>
     {{#collection contentBinding="MSA.energyTypesController" tagName="ul"}}
