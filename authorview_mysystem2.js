@@ -96,7 +96,7 @@ View.prototype.Mysystem2Node.getBuildInfoDiv = function() {
   var git_sha         = document.createTextNode("commit sha  : c5645ab99037593453971a43ea2d0f1620b73a78 ");
   var git_time        = document.createTextNode("commit time : Fri May 31 15:58:22 2013 -0400 ");
   var git_branch      = document.createTextNode("git branch  : (HEAD, origin/master, origin/HEAD, master) ");
-  var sc_build_time   = document.createTextNode("build time  : 2013-06-04 10:16:55 -0400 ");
+  var sc_build_time   = document.createTextNode("build time  : 2013-06-10 11:49:32 -0400 ");
   var sc_build_number = document.createTextNode("build no.   : 8ac8325606b9ce7e115ae60200fe4522a9073fbc ");
   
   git_sha_div.appendChild(git_sha);
